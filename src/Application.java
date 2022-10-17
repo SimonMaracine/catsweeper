@@ -1,23 +1,25 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-public class Application extends JFrame {
-    Tile[][] field;
-    JPanel pnlField;
+import static java.awt.GridBagConstraints.BOTH;
+import static java.awt.GridBagConstraints.CENTER;
+
+class Application extends JFrame {
+    private JPanel pnlMain;
+    private Field field;
+    private int lastGameWidth = 0;
+    private int lastGameHeight = 0;
 
     Application() {
         super("Catsweeper");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        var pane = getContentPane();
-        pane.setLayout(new GridBagLayout());
-
+        resetMainPanel();
         setupMenuBar();
         setupGameMenu();
 
+        add(pnlMain);
         pack();
         setVisible(true);
     }
@@ -56,36 +58,42 @@ public class Application extends JFrame {
     }
 
     private void setupGameMenu() {
+        var pnlButtons = new JPanel(new GridBagLayout());
+
         var btnTenByTen = new JButton("10x10 field");
         var btnFifteenByFifteen = new JButton("15x15 field");
         var btnCustom = new JButton("Custom field");
 
-        var lytButtons = new GridBagLayout();
+        btnTenByTen.addActionListener(actionEvent -> {
+            resetMainPanel();
+            setupGame(10, 10);
+        });
 
+        btnFifteenByFifteen.addActionListener(actionEvent -> {
+            resetMainPanel();
+            setupGame(15, 15);
+        });
+
+        btnCustom.addActionListener(actionEvent -> {
+
+        });
+
+        var cstButtons = new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0, CENTER, BOTH, new Insets(60, 20, 60, 20), 10, 60);
+
+        pnlButtons.add(btnTenByTen, cstButtons);
+        cstButtons.gridx = 1;
+        pnlButtons.add(btnFifteenByFifteen, cstButtons);
+        cstButtons.gridx = 2;
+        pnlButtons.add(btnCustom, cstButtons);
+
+        pnlMain.add(pnlButtons);
+        pack();
     }
 
     private void newGame() {
-        if (pnlField != null) {
-            remove(pnlField);
-        }
+        resetMainPanel();
 
-        pnlField = new JPanel();
-
-        var lytGrid = new GridLayout(10, 10, 2, 2);
-        pnlField.setLayout(lytGrid);
-
-        field = new Tile[10][10];
-
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                Tile tile = new Tile(TileType.Empty);
-                pnlField.add(tile);
-                field[i][j] = tile;
-            }
-        }
-
-        getContentPane().add(pnlField);
-        pack();
+        setupGame(lastGameWidth, lastGameHeight);
     }
 
     private void loadGame() {
@@ -94,5 +102,35 @@ public class Application extends JFrame {
 
     private void about() {
         System.out.println("about");
+    }
+
+    private void resetMainPanel() {
+        if (pnlMain != null) {
+            pnlMain.removeAll();
+        }
+
+        pnlMain = new JPanel(new GridLayout());
+    }
+
+    private void setupGame(int width, int height) {
+        if (field != null) {
+            remove(field);
+        }
+
+        field = new Field(width, height);
+
+        var lytGrid = new GridLayout(width, height, 2, 2);
+        field.setLayout(lytGrid);
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                Tile tile = new Tile(TileType.Empty);
+                field.add(tile);
+                field.setTile(i, j, tile);
+            }
+        }
+
+        pnlMain.add(field);
+        pack();
     }
 }

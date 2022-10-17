@@ -1,7 +1,7 @@
 import javax.swing.*;
 
-public class Tile extends JButton {
-    TileType type;
+class Tile extends JButton {
+    private TileType type;
 
     Tile(TileType type) {
         super("S");
