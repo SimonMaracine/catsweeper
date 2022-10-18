@@ -9,18 +9,18 @@ class Application extends JFrame {
     private Field field;
     private int lastGameWidth = 0;
     private int lastGameHeight = 0;
+    private int lastGameCatsPercentage = 0;
 
     Application() {
         super("Catsweeper");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(350, 300));
 
         resetMainPanel();
         setupMenuBar();
         setupGameMenu();
 
-        add(pnlMain);
-        pack();
         setVisible(true);
     }
 
@@ -58,28 +58,29 @@ class Application extends JFrame {
     }
 
     private void setupGameMenu() {
-        var pnlButtons = new JPanel(new GridBagLayout());
-
         var btnTenByTen = new JButton("10x10 field");
         var btnFifteenByFifteen = new JButton("15x15 field");
         var btnCustom = new JButton("Custom field");
 
         btnTenByTen.addActionListener(actionEvent -> {
             resetMainPanel();
-            setupGame(10, 10);
+            setupGame(10, 10, 15);
         });
 
         btnFifteenByFifteen.addActionListener(actionEvent -> {
             resetMainPanel();
-            setupGame(15, 15);
+            setupGame(15, 15, 18);
         });
 
         btnCustom.addActionListener(actionEvent -> {
-
+            resetMainPanel();
+            setupCustom();
         });
 
-        var cstButtons = new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0, CENTER, BOTH, new Insets(60, 20, 60, 20), 10, 60);
+        var cstButtons = new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0, CENTER, BOTH, new Insets(60, 20, 60, 20), 10, 70);
+        var pnlButtons = new JPanel(new GridBagLayout());
 
+        cstButtons.gridx = 0;
         pnlButtons.add(btnTenByTen, cstButtons);
         cstButtons.gridx = 1;
         pnlButtons.add(btnFifteenByFifteen, cstButtons);
@@ -92,8 +93,7 @@ class Application extends JFrame {
 
     private void newGame() {
         resetMainPanel();
-
-        setupGame(lastGameWidth, lastGameHeight);
+        setupGame(lastGameWidth, lastGameHeight, lastGameCatsPercentage);
     }
 
     private void loadGame() {
@@ -106,31 +106,101 @@ class Application extends JFrame {
 
     private void resetMainPanel() {
         if (pnlMain != null) {
-            pnlMain.removeAll();
+            remove(pnlMain);
         }
 
         pnlMain = new JPanel(new GridLayout());
+        add(pnlMain);
     }
 
-    private void setupGame(int width, int height) {
+    private void setupGame(int width, int height, int catsPercentage) {
+        assert width >= Field.MIN_WIDTH && width <= Field.MAX_WIDTH;
+        assert height >= Field.MIN_HEIGHT && height <= Field.MAX_HEIGHT;
+        assert catsPercentage >= Field.MIN_PERCENT && catsPercentage <= Field.MAX_PERCENT;
+
+        // TODO top
+
         if (field != null) {
             remove(field);
         }
 
-        field = new Field(width, height);
+        field = new Field(width, height, catsPercentage);
 
         var lytGrid = new GridLayout(width, height, 2, 2);
         field.setLayout(lytGrid);
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                Tile tile = new Tile(TileType.Empty);
-                field.add(tile);
-                field.setTile(i, j, tile);
-            }
-        }
+        assert pnlMain != null : "The main panel must not be null";
 
         pnlMain.add(field);
+        pack();
+
+        lastGameWidth = width;
+        lastGameHeight = height;
+        lastGameCatsPercentage = catsPercentage;
+    }
+
+    private void setupCustom() {
+        var lblWidth = new JLabel("Width");
+        var lblHeight = new JLabel("Height");
+        var lblMinesPercentage = new JLabel("Mines Percentage");
+        var sldWidth = new JSlider(Field.MIN_WIDTH, Field.MAX_WIDTH, 15);
+        var sldHeight = new JSlider(Field.MIN_HEIGHT, Field.MAX_HEIGHT, 15);
+        var sldMinesPercentage = new JSlider(Field.MIN_PERCENT, Field.MAX_PERCENT, 20);
+        var btnStart = new JButton("Start Game");
+        var btnCancel = new JButton("Cancel");
+
+        sldWidth.setMajorTickSpacing(5);
+        sldWidth.setPaintTicks(true);
+        sldWidth.setSnapToTicks(true);
+
+        sldHeight.setMajorTickSpacing(5);
+        sldHeight.setPaintTicks(true);
+        sldHeight.setSnapToTicks(true);
+
+        sldMinesPercentage.setMajorTickSpacing(5);
+        sldMinesPercentage.setPaintTicks(true);
+        sldMinesPercentage.setSnapToTicks(true);
+
+        btnStart.addActionListener(actionEvent -> {
+            resetMainPanel();
+            setupGame(sldWidth.getValue(), sldHeight.getValue(), sldMinesPercentage.getValue());
+        });
+
+        btnCancel.addActionListener(actionEvent -> {
+            resetMainPanel();
+            setupGameMenu();
+        });
+
+        var cstCustom = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, CENTER, BOTH, new Insets(10, 10, 10, 10), 0, 0);
+        var pnlCustom = new JPanel(new GridBagLayout());
+
+        cstCustom.gridy = 0;
+        pnlCustom.add(lblWidth, cstCustom);
+        cstCustom.gridy = 1;
+        pnlCustom.add(lblHeight, cstCustom);
+        cstCustom.gridy = 2;
+        pnlCustom.add(lblMinesPercentage, cstCustom);
+
+        cstCustom.gridx = 1;
+
+        cstCustom.gridy = 0;
+        pnlCustom.add(sldWidth, cstCustom);
+        cstCustom.gridy = 1;
+        pnlCustom.add(sldHeight, cstCustom);
+        cstCustom.gridy = 2;
+        pnlCustom.add(sldMinesPercentage, cstCustom);
+
+        cstCustom.gridx = 0;
+        cstCustom.gridwidth = 2;
+
+        cstCustom.gridy = 3;
+        pnlCustom.add(btnStart, cstCustom);
+        cstCustom.gridy = 4;
+        pnlCustom.add(btnCancel, cstCustom);
+
+        assert pnlMain != null : "The main panel must not be null";
+
+        pnlMain.add(pnlCustom);
         pack();
     }
 }
