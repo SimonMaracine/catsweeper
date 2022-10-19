@@ -21,6 +21,10 @@ class Player extends JLabel {
         resizeAndSetIcon(playerNormalIcon);
     }
 
+    PlayerIcon getPlayerIcon() {
+        return playerIcon;
+    }
+
     void setPlayerIcon(PlayerIcon playerIcon) {
         this.playerIcon = playerIcon;
 

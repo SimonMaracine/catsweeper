@@ -74,6 +74,7 @@ class Field extends JPanel implements MouseListener {
             }
             case Cat -> {
                 gameOver = true;
+
                 player.setPlayerIcon(PlayerIcon.Embarrassed);
                 revealAllCats();
                 JOptionPane.showMessageDialog(this, "Game Over!");
@@ -215,7 +216,12 @@ class Field extends JPanel implements MouseListener {
     }
 
     private void setIconNormalAfter(int milliseconds) {
-        Timer timer = new Timer(milliseconds, actionEvent -> player.setPlayerIcon(PlayerIcon.Normal));
+        Timer timer = new Timer(milliseconds, actionEvent -> {
+            if (player.getPlayerIcon() == PlayerIcon.Happy) {
+                player.setPlayerIcon(PlayerIcon.Normal);
+            }
+        });
+
         timer.setRepeats(false);
         timer.start();
     }
