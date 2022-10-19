@@ -100,7 +100,7 @@ class Tile extends JButton implements ComponentListener {
     }
 
     private void resizeAndSetIcon(ImageIcon icon, int componentWidth, int componentHeight) {
-        long current = System.currentTimeMillis();
+        final long current = System.currentTimeMillis();
 
         if (current - lastResize > 90) {  // TODO this is a bit dodgy
             lastResize = System.currentTimeMillis();
@@ -119,7 +119,7 @@ class Tile extends JButton implements ComponentListener {
             height = componentWidth - 10;
         }
 
-        var image= icon.getImage().getScaledInstance(width, height, SCALE_SMOOTH);
+        var image= icon.getImage().getScaledInstance(width, height, SCALE_SMOOTH);  // FIXME resize only once per icon
         setIcon(new ImageIcon(image));
     }
 

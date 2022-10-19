@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Random;
@@ -15,15 +16,17 @@ class Field extends JPanel implements MouseListener {
     private final int width;
     private final int height;
     private final int catsCount;
+    private final Player player;
 
     private boolean firstClick = false;
     private boolean gameOver = false;
 
-    Field(int width, int height, int catsPercentage) {
+    Field(int width, int height, int catsPercentage, Player player) {
         super();
 
         this.width = width;
         this.height = height;
+        this.player = player;
 
         catsCount = (width * height * catsPercentage) / 100;
         field = new Tile[width][height];
@@ -63,18 +66,26 @@ class Field extends JPanel implements MouseListener {
         tile.reveal();
 
         switch (tile.getTileType()) {
-            case None -> cascade(clickedI, clickedJ);
+            case None -> {
+                cascade(clickedI, clickedJ);
+
+                player.setPlayerIcon(PlayerIcon.Happy);
+                setIconNormalAfter(1200);
+            }
             case Cat -> {
                 gameOver = true;
+                player.setPlayerIcon(PlayerIcon.Embarrassed);
                 revealAllCats();
-                JOptionPane.showMessageDialog(this, "Game Over");
+                JOptionPane.showMessageDialog(this, "Game Over!");
             }
             default -> {}
         }
 
         if (hasWon()) {
             gameOver = true;
-            JOptionPane.showMessageDialog(this, "You Have Won");
+            player.setPlayerIcon(PlayerIcon.Happy);
+
+            JOptionPane.showMessageDialog(this, "You Have Won!");
         }
     }
 
@@ -187,20 +198,26 @@ class Field extends JPanel implements MouseListener {
         }
     }
 
-    private boolean hasWon() {
-        boolean revealed = true;
-
+    private boolean hasWon() {  // FIXME this seems dodgy
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 final Tile tile = field[i][j];
 
                 if (tile.getTileType() != TileType.Cat) {
-                    revealed = tile.isRevealed();
+                    if (!tile.isRevealed()) {
+                        return false;
+                    }
                 }
             }
         }
 
-        return revealed;
+        return true;
+    }
+
+    private void setIconNormalAfter(int milliseconds) {
+        Timer timer = new Timer(milliseconds, actionEvent -> player.setPlayerIcon(PlayerIcon.Normal));
+        timer.setRepeats(false);
+        timer.start();
     }
 
     @Override
