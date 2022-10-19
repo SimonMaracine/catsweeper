@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Random;
@@ -33,7 +32,7 @@ class Field extends JPanel implements MouseListener {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                final Tile tile = new Tile(i, j);
+                final Tile tile = new Tile();
                 add(tile);
                 field[i][j] = tile;
 
@@ -241,6 +240,10 @@ class Field extends JPanel implements MouseListener {
         }
 
         final Tile tile = (Tile) mouseEvent.getComponent();
+
+        if (tile.isRevealed()) {
+            return;
+        }
 
         switch (tile.getTileIcon()) {
             case None, Cat -> tile.setTileIcon(TileIcon.Flag);

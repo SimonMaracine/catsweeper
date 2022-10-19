@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -18,23 +19,19 @@ enum TileIcon {
 }
 
 class Tile extends JButton implements ComponentListener {
-    private final int x, y;
     private TileType tileType = TileType.None;
     private TileIcon tileIcon = TileIcon.None;
     private boolean revealed = false;
     private int number = 0;
 
-    private static final ImageIcon catIcon = new ImageIcon("res/cat-solid.png");
+    static final ImageIcon catIcon = new ImageIcon("res/cat-solid.png");
     private static final ImageIcon flagIcon = new ImageIcon("res/flag-solid.png");
     private static final ImageIcon questionMarkIcon = new ImageIcon("res/question-solid.png");
 
     private long lastResize = 0;
 
-    Tile(int x, int y) {
+    Tile() {
         super();
-
-        this.x = x;
-        this.y = y;
 
         addComponentListener(this);
     }
@@ -125,14 +122,14 @@ class Tile extends JButton implements ComponentListener {
             height = componentWidth - 10;
         }
 
-        var image= icon.getImage().getScaledInstance(width, height, SCALE_SMOOTH);  // FIXME resize only once per icon
+        var image= icon.getImage().getScaledInstance(width, height, SCALE_SMOOTH);
         setIcon(new ImageIcon(image));
     }
 
     @Override
     public void componentResized(ComponentEvent componentEvent) {
-            var component = componentEvent.getComponent();
-            updateIcon(component.getWidth(), component.getHeight());
+        var component = componentEvent.getComponent();
+        updateIcon(component.getWidth(), component.getHeight());
     }
 
     @Override

@@ -1,8 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-import static java.awt.GridBagConstraints.BOTH;
-import static java.awt.GridBagConstraints.CENTER;
+import static java.awt.GridBagConstraints.*;
 
 class Application extends JFrame {
     private JPanel pnlMain;
@@ -18,6 +17,7 @@ class Application extends JFrame {
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(640, 480));
+        setIconImage(Tile.catIcon.getImage());
 
         resetMainPanel();
         setupGameMenu();
@@ -30,6 +30,7 @@ class Application extends JFrame {
         var btnFifteenByFifteen = new JButton("15x15 field");
         var btnThirtyByFifteen = new JButton("30x15 field");
         var btnCustom = new JButton("Custom field");
+        var btnAbout = new JButton("About");
 
         btnTenByTen.addActionListener(actionEvent -> {
             resetMainPanel();
@@ -51,6 +52,8 @@ class Application extends JFrame {
             setupCustom();
         });
 
+        btnAbout.addActionListener(actionEvent -> about());
+
         var cstButtons = new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0, CENTER, BOTH, new Insets(20, 20, 20, 20), 10, 70);
         var pnlButtons = new JPanel(new GridBagLayout());
 
@@ -68,17 +71,25 @@ class Application extends JFrame {
         cstButtons.gridx = 1;
         pnlButtons.add(btnCustom, cstButtons);
 
+        cstButtons.gridy = 2;
+
+        cstButtons.gridx = 0;
+        cstButtons.gridwidth = 2;
+        cstButtons.fill = NONE;
+        cstButtons.ipadx = 40;
+        cstButtons.ipady = 10;
+        pnlButtons.add(btnAbout, cstButtons);
+
         pnlMain.add(pnlButtons, cstMain);
         pack();
     }
 
-    private void newGame() {
-        resetMainPanel();
-        setupGame(lastGameWidth, lastGameHeight, lastGameCatsPercentage);
+    private void about() {
+        new About();
     }
 
-    private void about() {
-        System.out.println("about");
+    private void highScore() {
+        new HighScore();
     }
 
     private void resetMainPanel() {
@@ -111,7 +122,7 @@ class Application extends JFrame {
         cstMain.weightx = 1.0;
         pnlMain.add(field, cstMain);
         cstMain.gridx = 1;
-        cstMain.weightx = 0.01;
+        cstMain.weightx = 0.0;
         pnlMain.add(pnlPlayer, cstMain);
         pack();
 
@@ -130,9 +141,7 @@ class Application extends JFrame {
             setupGame(lastGameWidth, lastGameHeight, lastGameCatsPercentage);
         });
 
-        btnHighScore.addActionListener(actionEvent -> {
-            // TODO this
-        });
+        btnHighScore.addActionListener(actionEvent -> highScore());
 
         btnMainMenu.addActionListener(actionEvent -> {
             resetMainPanel();
@@ -159,10 +168,10 @@ class Application extends JFrame {
     private void setupCustom() {
         var lblWidth = new JLabel("Width");
         var lblHeight = new JLabel("Height");
-        var lblMinesPercentage = new JLabel("Mines Percentage");
+        var lblCatsPercentage = new JLabel("Cats Percentage");
         var sldWidth = new JSlider(Field.MIN_WIDTH, Field.MAX_WIDTH, 15);
         var sldHeight = new JSlider(Field.MIN_HEIGHT, Field.MAX_HEIGHT, 15);
-        var sldMinesPercentage = new JSlider(Field.MIN_PERCENT, Field.MAX_PERCENT, 20);
+        var sldCatsPercentage = new JSlider(Field.MIN_PERCENT, Field.MAX_PERCENT, 20);
         var btnStart = new JButton("Start Game");
         var btnCancel = new JButton("Cancel");
 
@@ -174,13 +183,13 @@ class Application extends JFrame {
         sldHeight.setPaintTicks(true);
         sldHeight.setSnapToTicks(true);
 
-        sldMinesPercentage.setMajorTickSpacing(5);
-        sldMinesPercentage.setPaintTicks(true);
-        sldMinesPercentage.setSnapToTicks(true);
+        sldCatsPercentage.setMajorTickSpacing(5);
+        sldCatsPercentage.setPaintTicks(true);
+        sldCatsPercentage.setSnapToTicks(true);
 
         btnStart.addActionListener(actionEvent -> {
             resetMainPanel();
-            setupGame(sldWidth.getValue(), sldHeight.getValue(), sldMinesPercentage.getValue());
+            setupGame(sldWidth.getValue(), sldHeight.getValue(), sldCatsPercentage.getValue());
         });
 
         btnCancel.addActionListener(actionEvent -> {
@@ -196,7 +205,7 @@ class Application extends JFrame {
         cstCustom.gridy = 1;
         pnlCustom.add(lblHeight, cstCustom);
         cstCustom.gridy = 2;
-        pnlCustom.add(lblMinesPercentage, cstCustom);
+        pnlCustom.add(lblCatsPercentage, cstCustom);
 
         cstCustom.gridx = 1;
 
@@ -205,7 +214,7 @@ class Application extends JFrame {
         cstCustom.gridy = 1;
         pnlCustom.add(sldHeight, cstCustom);
         cstCustom.gridy = 2;
-        pnlCustom.add(sldMinesPercentage, cstCustom);
+        pnlCustom.add(sldCatsPercentage, cstCustom);
 
         cstCustom.gridx = 0;
         cstCustom.gridwidth = 2;
