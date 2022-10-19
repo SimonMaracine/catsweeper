@@ -64,12 +64,12 @@ class Application extends JFrame {
 
         btnTenByTen.addActionListener(actionEvent -> {
             resetMainPanel();
-            setupGame(10, 10, 15);
+            setupGame(10, 10, 12);
         });
 
         btnFifteenByFifteen.addActionListener(actionEvent -> {
             resetMainPanel();
-            setupGame(15, 15, 18);
+            setupGame(15, 15, 12);
         });
 
         btnCustom.addActionListener(actionEvent -> {

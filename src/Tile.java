@@ -7,13 +7,19 @@ import static java.awt.Image.SCALE_SMOOTH;
 enum TileType {
     None,
     Number,
+    Cat
+}
+
+enum TileIcon {
     Cat,
     Flag,
     QuestionMark
 }
 
 class Tile extends JButton implements ComponentListener {
+    private final int x, y;
     private TileType tileType = TileType.None;
+    private TileIcon tileIcon = TileIcon.Cat;
     private boolean revealed = false;
     private int number = 0;
 
@@ -23,18 +29,18 @@ class Tile extends JButton implements ComponentListener {
 
     private long lastResize = 0;
 
-    Tile() {
+    Tile(int x, int y) {
         super();
+
+        this.x = x;
+        this.y = y;
 
         addComponentListener(this);
     }
 
-    TileType getTileType() {
-        return tileType;
-    }
-
     void reveal() {
         revealed = true;
+        tileIcon = TileIcon.Cat;
 
         setEnabled(false);
         updateContents(getWidth(), getHeight());
@@ -44,34 +50,29 @@ class Tile extends JButton implements ComponentListener {
         return revealed;
     }
 
+    TileType getTileType() {
+        return tileType;
+    }
+
     void setTileType(TileType tileType) {
         this.tileType = tileType;
 
-        if (revealed) {
-            updateContents(getWidth(), getHeight());
-        }
+        updateContents(getWidth(), getHeight());
+    }
+
+    TileIcon getTileIcon() {
+        return tileIcon;
+    }
+
+    void setTileIcon(TileIcon tileIcon) {
+        this.tileIcon = tileIcon;
+
+        updateContents(getWidth(), getHeight());
     }
 
     void setNumber(int number) {
         this.number = number;
     }
-
-    @Override
-    public void componentResized(ComponentEvent componentEvent) {
-        if (revealed) {
-            var component = componentEvent.getComponent();
-            updateContents(component.getWidth(), component.getHeight());
-        }
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent componentEvent) {}
-
-    @Override
-    public void componentShown(ComponentEvent componentEvent) {}
-
-    @Override
-    public void componentHidden(ComponentEvent componentEvent) {}
 
     private void updateContents(int width, int height) {
         switch (tileType) {
@@ -83,13 +84,17 @@ class Tile extends JButton implements ComponentListener {
                 }
                 break;
             case Cat:
-                resizeAndSetIcon(catIcon, width, height);
-                break;
-            case Flag:
-                resizeAndSetIcon(flagIcon, width, height);
-                break;
-            case QuestionMark:
-                resizeAndSetIcon(questionMarkIcon, width, height);
+                switch (tileIcon) {
+                    case Cat -> {
+                        if (revealed) {
+                            resizeAndSetIcon(catIcon, width, height);
+                        } else {
+                            setIcon(null);
+                        }
+                    }
+                    case Flag -> resizeAndSetIcon(flagIcon, width, height);
+                    case QuestionMark -> resizeAndSetIcon(questionMarkIcon, width, height);
+                }
                 break;
         }
     }
@@ -117,4 +122,21 @@ class Tile extends JButton implements ComponentListener {
         var image= icon.getImage().getScaledInstance(width, height, SCALE_SMOOTH);
         setIcon(new ImageIcon(image));
     }
+
+    @Override
+    public void componentResized(ComponentEvent componentEvent) {
+        if (revealed) {
+            var component = componentEvent.getComponent();
+            updateContents(component.getWidth(), component.getHeight());
+        }
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent componentEvent) {}
+
+    @Override
+    public void componentShown(ComponentEvent componentEvent) {}
+
+    @Override
+    public void componentHidden(ComponentEvent componentEvent) {}
 }

@@ -1,7 +1,9 @@
 import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Random;
 
-class Field extends JPanel {
+class Field extends JPanel implements MouseListener {
     static final int MAX_WIDTH = 45;
     static final int MAX_HEIGHT = 45;
     static final int MIN_WIDTH = 4;
@@ -28,14 +30,14 @@ class Field extends JPanel {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                Tile tile = new Tile();
+                final Tile tile = new Tile(i, j);
                 add(tile);
                 field[i][j] = tile;
 
                 final int iID = i;
                 final int jID = j;
-                field[i][j].addActionListener(actionEvent -> onTileClicked(iID, jID));
-                // TODO right click listener for flag and question mark
+                tile.addActionListener(actionEvent -> onTileClicked(iID, jID));
+                tile.addMouseListener(this);
             }
         }
     }
@@ -47,6 +49,10 @@ class Field extends JPanel {
 
         final Tile tile = field[clickedI][clickedJ];
 
+        if (tile.getTileIcon() == TileIcon.Flag) {
+            return;
+        }
+
         if (!firstClick) {
             firstClick = true;
 
@@ -56,20 +62,19 @@ class Field extends JPanel {
 
         tile.reveal();
 
-        if (tile.getTileType() == TileType.Cat) {
-            gameOver = true;
-            JOptionPane.showMessageDialog(this, "Game Over");
-            return;
-        }
-
         switch (tile.getTileType()) {
             case None -> cascade(clickedI, clickedJ);
             case Cat -> {
                 gameOver = true;
+                revealAllCats();
                 JOptionPane.showMessageDialog(this, "Game Over");
             }
-            default -> {
-            }
+            default -> {}
+        }
+
+        if (hasWon()) {
+            gameOver = true;
+            JOptionPane.showMessageDialog(this, "You Have Won");
         }
     }
 
@@ -137,7 +142,7 @@ class Field extends JPanel {
                 final int x = clickedI + i;
                 final int y = clickedJ + j;
 
-                if (x >= 0 && x < width && y > 0 && y < height) {
+                if (x >= 0 && x < width && y >= 0 && y < height) {
                     final Tile tile = field[x][y];
 
                     if (!tile.isRevealed()) {
@@ -169,4 +174,69 @@ class Field extends JPanel {
 
         return false;
     }
+
+    private void revealAllCats() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                final Tile tile = field[i][j];
+
+                if (tile.getTileType() == TileType.Cat && !tile.isRevealed()) {
+                    tile.reveal();
+                }
+            }
+        }
+    }
+
+    private boolean hasWon() {
+        boolean revealed = true;
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                final Tile tile = field[i][j];
+
+                if (tile.getTileType() != TileType.Cat) {
+                    revealed = tile.isRevealed();
+                }
+            }
+        }
+
+        return revealed;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+        if (!SwingUtilities.isRightMouseButton(mouseEvent)) {
+            return;
+        }
+
+        if (gameOver) {
+            return;
+        }
+
+        if (!firstClick) {
+            return;
+        }
+
+        final Tile tile = (Tile) mouseEvent.getComponent();
+
+        if (tile.getTileType() == TileType.Cat) {
+            switch (tile.getTileIcon()) {
+                case Cat -> tile.setTileIcon(TileIcon.Flag);
+                case Flag -> tile.setTileIcon(TileIcon.QuestionMark);
+                case QuestionMark -> tile.setTileIcon(TileIcon.Cat);
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {}
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {}
 }
