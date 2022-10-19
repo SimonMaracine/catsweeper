@@ -62,8 +62,6 @@ class Tile extends JButton implements ComponentListener {
 
     void setTileType(TileType tileType) {
         this.tileType = tileType;
-
-        updateContents(getWidth(), getHeight());
     }
 
     TileIcon getTileIcon() {
@@ -73,7 +71,7 @@ class Tile extends JButton implements ComponentListener {
     void setTileIcon(TileIcon tileIcon) {
         this.tileIcon = tileIcon;
 
-        updateContents(getWidth(), getHeight());
+        updateIcon(getWidth(), getHeight());
     }
 
     void setNumber(int number) {
@@ -133,10 +131,8 @@ class Tile extends JButton implements ComponentListener {
 
     @Override
     public void componentResized(ComponentEvent componentEvent) {
-        if (revealed) {
             var component = componentEvent.getComponent();
-            updateContents(component.getWidth(), component.getHeight());
-        }
+            updateIcon(component.getWidth(), component.getHeight());
     }
 
     @Override

@@ -70,7 +70,7 @@ class Field extends JPanel implements MouseListener {
                 cascade(clickedI, clickedJ);
 
                 player.setPlayerIcon(PlayerIcon.Happy);
-                setIconNormalAfter(1200);
+                setIconNormalAfter(1300);
             }
             case Cat -> {
                 gameOver = true;

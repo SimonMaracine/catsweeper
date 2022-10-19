@@ -111,7 +111,7 @@ class Application extends JFrame {
         cstMain.weightx = 1.0;
         pnlMain.add(field, cstMain);
         cstMain.gridx = 1;
-        cstMain.weightx = 1.0;  // FIXME this
+        cstMain.weightx = 0.01;
         pnlMain.add(pnlPlayer, cstMain);
         pack();
 
