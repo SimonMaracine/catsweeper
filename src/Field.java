@@ -86,7 +86,11 @@ class Field extends JPanel implements MouseListener {
             player.setPlayerIcon(PlayerIcon.Happy);
 
             JOptionPane.showMessageDialog(this, "You Have Won!");
+            String name = JOptionPane.showInputDialog(this, "Type your name", "HighScore", JOptionPane.PLAIN_MESSAGE);
+            Application.highScore.insert(new Score(Application.highScore.lastId + 1, name, 1272));
         }
+
+        Application.highScore.insert(new Score(Application.highScore.lastId + 1, "Simon", 1272));
     }
 
     private void generateCatField(int clickedI, int clickedJ) {

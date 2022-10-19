@@ -1,9 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import static java.awt.GridBagConstraints.*;
 
-class Application extends JFrame {
+class Application extends JFrame implements WindowListener {
     private JPanel pnlMain;
     private final GridBagConstraints cstMain = new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, CENTER, BOTH, new Insets(0, 0, 0, 0), 0, 0);
     private Field field;
@@ -11,6 +13,8 @@ class Application extends JFrame {
     private int lastGameWidth = 0;
     private int lastGameHeight = 0;
     private int lastGameCatsPercentage = 0;
+
+    static final HighScoreData highScore = new HighScoreData("highscore.xml");
 
     Application() {
         super("Catsweeper");
@@ -229,4 +233,27 @@ class Application extends JFrame {
         pnlMain.add(pnlCustom, cstMain);
         pack();
     }
+
+    @Override
+    public void windowOpened(WindowEvent windowEvent) {}
+
+    @Override
+    public void windowClosing(WindowEvent windowEvent) {
+        Application.highScore.dump("highscore.xml");
+    }
+
+    @Override
+    public void windowClosed(WindowEvent windowEvent) {}
+
+    @Override
+    public void windowIconified(WindowEvent windowEvent) {}
+
+    @Override
+    public void windowDeiconified(WindowEvent windowEvent) {}
+
+    @Override
+    public void windowActivated(WindowEvent windowEvent) {}
+
+    @Override
+    public void windowDeactivated(WindowEvent windowEvent) {}
 }
