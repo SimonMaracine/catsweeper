@@ -11,6 +11,7 @@ enum TileType {
 }
 
 enum TileIcon {
+    None,
     Cat,
     Flag,
     QuestionMark
@@ -19,7 +20,7 @@ enum TileIcon {
 class Tile extends JButton implements ComponentListener {
     private final int x, y;
     private TileType tileType = TileType.None;
-    private TileIcon tileIcon = TileIcon.Cat;
+    private TileIcon tileIcon = TileIcon.None;
     private boolean revealed = false;
     private int number = 0;
 
@@ -40,7 +41,12 @@ class Tile extends JButton implements ComponentListener {
 
     void reveal() {
         revealed = true;
-        tileIcon = TileIcon.Cat;
+
+        switch (tileType) {
+            case None, Number -> tileIcon = TileIcon.None;
+            case Cat -> tileIcon = TileIcon.Cat;
+            default -> {}
+        }
 
         setEnabled(false);
         updateContents(getWidth(), getHeight());
@@ -75,27 +81,29 @@ class Tile extends JButton implements ComponentListener {
     }
 
     private void updateContents(int width, int height) {
+        updateIcon(width, height);
+
         switch (tileType) {
             case None:
                 break;
             case Number:
-                if (number != 0) {
-                    setText(String.valueOf(number));
+                if (revealed) {
+                    if (number != 0) {
+                        setText(String.valueOf(number));
+                    }
                 }
                 break;
             case Cat:
-                switch (tileIcon) {
-                    case Cat -> {
-                        if (revealed) {
-                            resizeAndSetIcon(catIcon, width, height);
-                        } else {
-                            setIcon(null);
-                        }
-                    }
-                    case Flag -> resizeAndSetIcon(flagIcon, width, height);
-                    case QuestionMark -> resizeAndSetIcon(questionMarkIcon, width, height);
-                }
                 break;
+        }
+    }
+
+    private void updateIcon(int width, int height) {
+        switch (tileIcon) {
+            case None -> setIcon(null);
+            case Cat -> resizeAndSetIcon(catIcon, width, height);
+            case Flag -> resizeAndSetIcon(flagIcon, width, height);
+            case QuestionMark -> resizeAndSetIcon(questionMarkIcon, width, height);
         }
     }
 

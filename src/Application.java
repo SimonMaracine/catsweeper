@@ -3,7 +3,6 @@ import java.awt.*;
 
 import static java.awt.GridBagConstraints.BOTH;
 import static java.awt.GridBagConstraints.CENTER;
-import static java.awt.Image.SCALE_SMOOTH;
 
 class Application extends JFrame {
     private JPanel pnlMain;
@@ -18,7 +17,7 @@ class Application extends JFrame {
         super("Catsweeper");
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(350, 300));
+        setMinimumSize(new Dimension(640, 480));
 
         resetMainPanel();
         setupGameMenu();
@@ -112,7 +111,7 @@ class Application extends JFrame {
         cstMain.weightx = 1.0;
         pnlMain.add(field, cstMain);
         cstMain.gridx = 1;
-        cstMain.weightx = 0.1;
+        cstMain.weightx = 1.0;  // FIXME this
         pnlMain.add(pnlPlayer, cstMain);
         pack();
 

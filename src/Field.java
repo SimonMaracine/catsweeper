@@ -242,12 +242,10 @@ class Field extends JPanel implements MouseListener {
 
         final Tile tile = (Tile) mouseEvent.getComponent();
 
-        if (tile.getTileType() == TileType.Cat) {
-            switch (tile.getTileIcon()) {
-                case Cat -> tile.setTileIcon(TileIcon.Flag);
-                case Flag -> tile.setTileIcon(TileIcon.QuestionMark);
-                case QuestionMark -> tile.setTileIcon(TileIcon.Cat);
-            }
+        switch (tile.getTileIcon()) {
+            case None, Cat -> tile.setTileIcon(TileIcon.Flag);
+            case Flag -> tile.setTileIcon(TileIcon.QuestionMark);
+            case QuestionMark -> tile.setTileIcon(TileIcon.None);
         }
     }
 

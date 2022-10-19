@@ -36,7 +36,7 @@ class Player extends JLabel {
     }
 
     private void resizeAndSetIcon(ImageIcon icon) {
-        var image= icon.getImage().getScaledInstance(64, 64, SCALE_SMOOTH);
+        var image= icon.getImage().getScaledInstance(90, 90, SCALE_SMOOTH);
         setIcon(new ImageIcon(image));
     }
 }
